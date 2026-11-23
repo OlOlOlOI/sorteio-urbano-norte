@@ -1,0 +1,55 @@
+/* Ajustes da versão web / celular */
+html:not(.web) .so-web { display: none; }
+html.web { height: 100%; }
+html.web body { height: 100%; overscroll-behavior: none; -webkit-text-size-adjust: 100%; }
+html.web .app { height: 100vh; height: 100dvh; }
+
+/* Coisas que só fazem sentido no computador (escolher pasta no Windows/Mac) */
+html.web #btnPasta, html.web #btnAbrirPasta, html.web #pastaAtual, html.web #btnMostrarSalvo,
+html.web label.check:has(#pastaDireto), html.web #blocoVertical .linha-botoes { display: none; }
+
+.btn-ir-sorteio { display: none; }
+.caixa-pin { width: min(380px, 100%); }
+.caixa-pin h3 { font-size: 26px; }
+.caixa-pin label { display: block; margin-top: 14px; font-size: 13px; color: var(--cinza); }
+.caixa-pin input { display: block; width: 100%; margin-top: 6px; padding: 12px 14px; font-size: 22px; letter-spacing: .4em; text-align: center; border: 2px solid var(--linha); border-radius: 10px; font-family: inherit; color: var(--carvao); }
+.caixa-pin input:focus { outline: none; border-color: var(--verde); }
+.caixa-pin .erro { color: #c0392b; min-height: 18px; }
+.caixa-pin .linha-botoes { margin-top: 14px; display: flex; gap: 10px; }
+.caixa-pin .btn-ouro { font-size: 15px; padding: 12px 22px; box-shadow: none; text-transform: none; letter-spacing: 0; }
+
+@media (max-width: 760px), (pointer: coarse) and (max-width: 900px) {
+  html.web .app { grid-template-columns: 1fr; }
+  html.web .config { padding: 18px 16px calc(28px + env(safe-area-inset-bottom)); border-right: 0; border-bottom: 0; }
+  html.web .config { padding-top: calc(18px + env(safe-area-inset-top)); }
+  html.web .btn-ir-sorteio { display: block; width: 100%; margin: 18px 0 6px; font-size: 18px; padding: 15px 20px; }
+  html.web .btn-icone { width: 44px; height: 44px; }
+  html.web input, html.web select, html.web textarea { font-size: 16px; } /* evita o zoom automático do iPhone */
+  html.web .btn { min-height: 44px; }
+  html.web .btn-pequeno { min-height: 40px; }
+  html.web .btn-mostrar, html.web .btn-contato { top: calc(12px + env(safe-area-inset-top)); }
+  html.web .btn-mostrar { left: 12px; }
+  html.web .btn-contato { right: 12px; }
+  html.web .app:not(.sem-lateral):not(.vertical) .btn-contato { display: none; } /* painel aberto ocupa a tela toda */
+  html.web .palco { padding-left: 14px; padding-right: 14px; }
+  html.web .btn-ouro { padding: 16px 40px; font-size: 20px; }
+  html.web .caixa-hist { width: 100%; max-height: 92dvh; }
+  html.web .barra-vertical .btn { min-height: 40px; }
+}
+
+@media (max-width: 560px) {
+  html.web .palco { padding-top: calc(66px + env(safe-area-inset-top)); padding-bottom: calc(24px + env(safe-area-inset-bottom)); }
+  html.web .ticket { border-radius: 14px; }
+  html.web .ticket-topo { padding: 18px 20px 22px; min-height: 150px; }
+  html.web .ticket-topo strong { font-size: 32px; padding-right: 58px; }
+  html.web .logo-bilhete { width: 44px; top: 16px; right: 16px; }
+  html.web .ticket-corpo { padding: 14px 20px 16px; gap: 12px; }
+  html.web .ticket-corpo div { grid-template-columns: 1fr; gap: 2px; }
+  html.web .ticket-corpo dd { font-size: 21px; }
+  html.web .ticket-rodape { padding: 10px 20px 14px; }
+  html.web .hist-topo, html.web .hist-ferramentas, html.web .hist-aviso { padding-left: 14px; padding-right: 14px; }
+  html.web .hist-rolagem { padding: 0 8px; }
+  html.web .sobreposicao { padding: 12px; }
+  html.web .caixa-contato { padding: 18px 18px 20px; }
+  html.web .caixa-contato h3 { font-size: 24px; }
+}
