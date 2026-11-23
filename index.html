@@ -143,7 +143,7 @@
         <p id="dicaIOS" class="dica" hidden>No iPhone: toque em <strong>Compartilhar</strong> e depois em <strong>Adicionar à Tela de Início</strong> para instalar.</p>
         <p class="dica">Tudo fica neste aparelho: a planilha não é enviada para a internet.</p>
       </section>
-      <button id="btnIrSorteio" class="btn btn-ouro btn-ir-sorteio">Ir para o sorteio</button>
+      <button id="btnIrSorteio" class="btn btn-ouro btn-ir-sorteio">Voltar ao sorteio</button>
     </aside>
 
     <div class="palco-casca">
@@ -157,6 +157,13 @@
 
         <div class="cena">
           <div class="cabecalho-vertical" aria-hidden="true"><img id="logoVertical" src="assets/emblema.png" alt=""></div>
+          <div id="vazioMobile" class="vazio-mobile">
+            <img src="assets/emblema.png" alt="Urbano Norte">
+            <h2>Vamos sortear?</h2>
+            <p>Escolha a planilha de corridas para começar. Ela fica só neste celular e não é enviada para a internet.</p>
+            <button id="btnEscolherM" class="btn btn-ouro">Escolher planilha</button>
+          </div>
+          <p id="infoMobile" class="info-mobile" hidden></p>
           <p id="nomeSorteio" class="nome-sorteio" hidden></p>
           <article id="ticket" class="ticket vazio" aria-live="polite">
             <div class="ticket-topo">
@@ -191,9 +198,20 @@
           <div class="acoes">
             <button id="btnSortear" class="btn btn-ouro" disabled>Sortear</button>
           </div>
+          <div class="acoes-extra">
+            <button id="btnGravarM" class="btn btn-claro" disabled>Gravar vídeo (10 s)</button>
+            <button id="btnImagemM" class="btn btn-claro" disabled>Salvar imagem</button>
+          </div>
         </div>
       </main>
     </div>
+
+    <nav id="abas" class="abas" aria-label="Navegação">
+      <button data-aba="sorteio" class="ativa"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2.5l8.5 4.9v9.2L12 21.5l-8.5-4.9V7.4z"/><path d="M12 8.5v7M8.5 12h7"/></svg><span>Sorteio</span></button>
+      <button data-aba="historico"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span>Histórico</span></button>
+      <button data-aba="contato" disabled><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg><span>Contato</span></button>
+      <button data-aba="ajustes"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg><span>Ajustes</span></button>
+    </nav>
 
     <div id="barraVertical" class="barra-vertical">
       <button id="btnGravarBarra" class="btn btn-claro btn-pequeno" disabled>Gravar vídeo (10 s)</button>
@@ -286,5 +304,6 @@
   <script src="logo.js"></script>
   <script src="video.js"></script>
   <script src="tema.js"></script>
+  <script src="mobile.js"></script>
 </body>
 </html>
