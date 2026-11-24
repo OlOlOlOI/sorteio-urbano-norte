@@ -214,6 +214,16 @@
     // O toque neste botão repete o salvamento do vídeo guardado (o menu Compartilhar abre porque há um toque novo).
     el('btnSalvarVideoAgora').addEventListener('click', () => el('btnSalvarVideoDeNovo').click());
     el('btnFecharVideo').addEventListener('click', fecharVideoPronto);
+    // Atualizar o app à força: apaga o que está guardado e recarrega (histórico e contatos NÃO são apagados)
+    el('btnAtualizarApp').addEventListener('click', async () => {
+      try {
+        const regs = await navigator.serviceWorker.getRegistrations();
+        await Promise.all(regs.map((r) => r.unregister()));
+        const ks = await caches.keys();
+        await Promise.all(ks.map((k) => caches.delete(k)));
+      } catch { /* segue */ }
+      location.reload();
+    });
   });
 
   const txt = (v, n) => String(v ?? '').slice(0, n);
@@ -406,7 +416,11 @@
 
   // Service worker (funciona offline depois da primeira abertura)
   if ('serviceWorker' in navigator && location.protocol !== 'file:') {
-    window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js').catch(() => {}); });
+    window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js', { updateViaCache: 'none' }).catch(() => {}); });
+    // Quando uma versão nova assume o controle, recarrega uma vez para já mostrá-la.
+    let recarregou = false;
+    const tinha = !!navigator.serviceWorker.controller;
+    navigator.serviceWorker.addEventListener('controllerchange', () => { if (tinha && !recarregou) { recarregou = true; location.reload(); } });
   }
 
   // Convite para instalar (Android/Chrome) e dica para iPhone
