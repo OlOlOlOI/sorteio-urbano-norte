@@ -53,6 +53,10 @@
   pend.addEventListener('click', () => el('btnSalvarVideoDeNovo').click());
   setInterval(() => { pend.hidden = el('btnSalvarVideoDeNovo').hidden; }, 300);
 
+  // Durante a gravação, a faixa fora da página também fica clara
+  const grav = el('gravacao');
+  new MutationObserver(() => document.documentElement.classList.toggle('gravando', !grav.hidden)).observe(grav, { attributes: true, attributeFilter: ['hidden'] });
+
   // Janelas acompanham a área visível (o teclado do iPhone não encolhe a página, só a "área visível")
   const vv = window.visualViewport;
   const raiz = document.documentElement.style;

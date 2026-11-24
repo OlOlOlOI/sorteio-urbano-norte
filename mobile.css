@@ -109,7 +109,9 @@ html.web label.check:has(#pastaDireto), html.web #blocoVertical .linha-botoes { 
 }
 
 /* Gravação: a imagem mantém a proporção 9:16 (sem esticar) e respeita a área do relógio/ilha do iPhone */
-html.web .gravacao { background: #141416; }
+/* As faixas em cima e embaixo da prévia usam o mesmo fundo claro do vídeo (nada de borda preta) */
+html.web .gravacao { background-color: #f1f4f1; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='90' height='155.88' viewBox='0 0 60 103.92'%3E%3Cpath d='M30 0 L60 17.32 L60 51.96 L30 69.28 L0 51.96 L0 17.32 Z M30 69.28 L30 103.92' fill='none' stroke='%2300a651' stroke-opacity='0.11' stroke-width='1.1'/%3E%3C/svg%3E"); }
+html.gravando, html.gravando body { background: #f1f4f1; }
 html.web .gravacao-palco canvas { width: min(100vw, calc(100vh * 9 / 16)); width: min(100vw, calc(100dvh * 9 / 16)); height: auto; max-width: none; aspect-ratio: 9 / 16; }
 html.web .gravacao-info { top: calc(14px + env(safe-area-inset-top)); }
 
