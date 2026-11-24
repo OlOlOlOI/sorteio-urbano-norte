@@ -1,7 +1,7 @@
 /* Versão web: ajustes gerais e MODO CELULAR (tela única + barra de navegação embaixo) */
 html:not(.web) .so-web { display: none; }
 html.web, html.web body { height: 100%; }
-html.web body { overscroll-behavior: none; -webkit-text-size-adjust: 100%; }
+html.web body { overscroll-behavior: none; -webkit-text-size-adjust: 100%; overflow: hidden; }
 html.web .app { height: 100vh; height: 100dvh; }
 
 html.web #btnPasta, html.web #btnAbrirPasta, html.web #pastaAtual, html.web #btnMostrarSalvo,
@@ -91,9 +91,10 @@ html.web label.check:has(#pastaDireto), html.web #blocoVertical .linha-botoes { 
   html.web .acoes-extra .btn { font-size: 14px; padding: 11px 8px; min-height: 46px; }
 
   /* Janelas */
-  html.web .sobreposicao { padding: 12px; align-items: flex-end; }
-  html.web .caixa-hist { width: 100%; max-height: 88dvh; border-radius: 16px 16px 0 0; }
-  html.web .caixa-contato, html.web .caixa-pin { width: 100%; border-radius: 16px 16px 0 0; padding: 18px 18px calc(22px + env(safe-area-inset-bottom)); }
+  /* Janelas no MEIO da tela; seguem a área visível quando o teclado abre */
+  html.web .sobreposicao { inset: auto; left: 0; right: 0; top: var(--vvt, 0px); height: var(--vvh, 100dvh); padding: 12px; align-items: center; justify-content: center; }
+  html.web .caixa-hist { width: 100%; max-height: 100%; border-radius: 16px; }
+  html.web .caixa-contato, html.web .caixa-pin, html.web .caixa-video { width: 100%; max-height: 100%; overflow-y: auto; border-radius: 16px; padding: 18px; }
   html.web .caixa-contato h3 { font-size: 24px; }
   html.web .hist-topo, html.web .hist-ferramentas, html.web .hist-aviso { padding-left: 14px; padding-right: 14px; }
   html.web .hist-rolagem { padding: 0 8px; }
@@ -102,4 +103,20 @@ html.web label.check:has(#pastaDireto), html.web #blocoVertical .linha-botoes { 
   html.web .tabela td:nth-child(3) { font-size: 15px; }
   html.web #blocoVertical #btnVertical { display: none; } /* o app já é em pé no celular */
   html.web .barra-vertical .btn { min-height: 40px; }
+}
+
+/* Gravação: a imagem mantém a proporção 9:16 (sem esticar) e respeita a área do relógio/ilha do iPhone */
+html.web .gravacao-palco canvas { width: min(100vw, calc(100vh * 9 / 16)); width: min(100vw, calc(100dvh * 9 / 16)); height: auto; max-width: none; aspect-ratio: 9 / 16; }
+html.web .gravacao-info { top: calc(14px + env(safe-area-inset-top)); }
+
+/* Janela "Vídeo pronto" */
+.caixa-video { width: min(420px, 100%); display: flex; flex-direction: column; gap: 10px; }
+.video-preview { width: 100%; max-height: 52vh; max-height: 52dvh; background: #141416; border-radius: 12px; display: block; object-fit: contain; }
+.caixa-video .btn-ouro { width: 100%; font-size: 18px; padding: 15px 20px; text-transform: none; letter-spacing: 0; }
+.caixa-video .btn-claro { width: 100%; }
+.btn-largo { grid-column: 1 / -1; }
+@media (max-width: 760px), (pointer: coarse) and (max-width: 900px) {
+  html.web .gravacao-info { left: 12px; right: 12px; gap: 10px; padding: 8px 10px; font-size: 13px; }
+  html.web .gravacao-barra { flex: 1; width: auto; min-width: 40px; }
+  html.web .gravacao-info #gravStatus { white-space: nowrap; }
 }

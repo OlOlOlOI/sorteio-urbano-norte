@@ -48,6 +48,21 @@
     el('abas').querySelector('[data-aba="contato"]').disabled = el('btnContato').disabled;
   }, 300);
 
+  // Vídeo guardado e ainda não salvo: botão na tela do sorteio
+  const pend = el('btnVideoPendenteM');
+  pend.addEventListener('click', () => el('btnSalvarVideoDeNovo').click());
+  setInterval(() => { pend.hidden = el('btnSalvarVideoDeNovo').hidden; }, 300);
+
+  // Janelas acompanham a área visível (o teclado do iPhone não encolhe a página, só a "área visível")
+  const vv = window.visualViewport;
+  const raiz = document.documentElement.style;
+  const ajustarVisivel = () => {
+    if (!vv) return;
+    raiz.setProperty('--vvh', vv.height + 'px');
+    raiz.setProperty('--vvt', vv.offsetTop + 'px');
+  };
+  if (vv) { vv.addEventListener('resize', ajustarVisivel); vv.addEventListener('scroll', ajustarVisivel); ajustarVisivel(); }
+
   // Ajustes em sanfona: toque no título abre e fecha cada bloco
   const secoes = [...document.querySelectorAll('#painel > section')];
   secoes.forEach((sec) => {

@@ -201,6 +201,7 @@
           <div class="acoes-extra">
             <button id="btnGravarM" class="btn btn-claro" disabled>Gravar vídeo (10 s)</button>
             <button id="btnImagemM" class="btn btn-claro" disabled>Salvar imagem</button>
+            <button id="btnVideoPendenteM" class="btn btn-ouro btn-largo" hidden>Salvar o vídeo pronto</button>
           </div>
         </div>
       </main>
@@ -272,6 +273,16 @@
       </div>
     </div>
 
+    <div id="videoPronto" class="sobreposicao" hidden>
+      <div class="caixa-contato caixa-video" role="dialog" aria-modal="true" aria-labelledby="videoProntoTitulo">
+        <h3 id="videoProntoTitulo">Vídeo pronto!</h3>
+        <video id="videoPreview" class="video-preview" playsinline muted loop controls></video>
+        <button id="btnSalvarVideoAgora" class="btn btn-ouro">Salvar / compartilhar</button>
+        <button id="btnFecharVideo" class="btn btn-claro">Fechar</button>
+        <p class="dica">Toque em <strong>Salvar / compartilhar</strong> e escolha <strong>Salvar vídeo</strong> ou o Instagram.</p>
+      </div>
+    </div>
+
     <div id="pinOverlay" class="sobreposicao" hidden>
       <div class="caixa-contato caixa-pin" role="dialog" aria-modal="true" aria-labelledby="pinTitulo">
         <h3 id="pinTitulo">Digite o PIN</h3>
@@ -301,6 +312,7 @@
   <script src="fundo.js"></script>
   <script src="vertical.js"></script>
   <script src="vendor/mp4-muxer.js"></script>
+  <script src="vendor/omggif.js"></script>
   <script src="logo.js"></script>
   <script src="video.js"></script>
   <script src="tema.js"></script>

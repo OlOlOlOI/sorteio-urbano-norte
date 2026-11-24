@@ -1,9 +1,9 @@
 // Service worker: guarda o aplicativo no aparelho para abrir mesmo sem internet.
-const VERSAO = 'sorteio-un-web-1.0.1';
+const VERSAO = 'sorteio-un-web-1.0.2';
 const ARQUIVOS = [
   './', 'index.html', 'style.css', 'mobile.css', 'manifest.webmanifest',
   'api-web.js', 'mobile.js', 'renderer.js', 'historico.js', 'fundo.js', 'vertical.js', 'logo.js', 'video.js', 'tema.js',
-  'vendor/xlsx.full.min.js', 'vendor/mp4-muxer.js',
+  'vendor/xlsx.full.min.js', 'vendor/mp4-muxer.js', 'vendor/omggif.js', 'assets/abertura-quadros.png', 'assets/abertura-quadros.json',
   'assets/emblema.png', 'assets/abertura.webp',
   'fonts/outfit-latin-400-normal.woff2', 'fonts/outfit-latin-500-normal.woff2', 'fonts/outfit-latin-600-normal.woff2',
   'fonts/outfit-latin-700-normal.woff2', 'fonts/outfit-latin-800-normal.woff2',

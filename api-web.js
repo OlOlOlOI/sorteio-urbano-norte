@@ -184,13 +184,37 @@
         return { ok: true, caminho: 'enviado pelo menu Compartilhar' };
       } catch (e) {
         // Cancelou, ou o navegador exige um toque novo (acontece depois de um vídeo demorado).
-        if (e && (e.name === 'AbortError' || e.name === 'NotAllowedError')) return { ok: false, cancelado: true };
+        if (e && (e.name === 'AbortError' || e.name === 'NotAllowedError')) return { ok: false, cancelado: true, semToque: e.name === 'NotAllowedError' };
         // outro erro: cai para o download
       }
     }
     baixar(blob, nome);
     return { ok: true, caminho: 'pasta de downloads do aparelho' };
   }
+
+  // ---------- Janela "Vídeo pronto" ----------
+  let urlPrevia = null;
+  function mostrarVideoPronto(blob) {
+    if (urlPrevia) URL.revokeObjectURL(urlPrevia);
+    urlPrevia = URL.createObjectURL(blob);
+    const v = el('videoPreview');
+    v.src = urlPrevia;
+    el('videoPronto').hidden = false;
+    v.play().catch(() => {});
+  }
+  function fecharVideoPronto() {
+    const ov = el('videoPronto');
+    if (!ov) return;
+    ov.hidden = true;
+    const v = el('videoPreview');
+    v.pause(); v.removeAttribute('src'); v.load();
+    if (urlPrevia) { URL.revokeObjectURL(urlPrevia); urlPrevia = null; }
+  }
+  document.addEventListener('DOMContentLoaded', () => {
+    // O toque neste botão repete o salvamento do vídeo guardado (o menu Compartilhar abre porque há um toque novo).
+    el('btnSalvarVideoAgora').addEventListener('click', () => el('btnSalvarVideoDeNovo').click());
+    el('btnFecharVideo').addEventListener('click', fecharVideoPronto);
+  });
 
   const txt = (v, n) => String(v ?? '').slice(0, n);
   const COR = /^#[0-9a-fA-F]{6}$/;
@@ -357,7 +381,17 @@
       const formato = ext === 'webm' ? 'webm' : 'mp4';
       if (!bytes || !bytes.byteLength) return { ok: false, erro: 'Vídeo inválido.' };
       const nome = String(sugestao || `sorteio.${formato}`).replace(/[^\w.-]/g, '-').slice(0, 80);
-      return entregar(new Blob([bytes], { type: 'video/' + formato }), nome, 'video/' + formato, 'Sorteio Urbano Norte');
+      const blob = new Blob([bytes], { type: 'video/' + formato });
+      const mime = 'video/' + formato;
+      const ativo = navigator.userActivation ? navigator.userActivation.isActive : true;
+      const compartilha = !!(navigator.canShare && navigator.canShare({ files: [new File([blob], nome, { type: mime })] }));
+      // Depois de um vídeo demorado o celular não deixa abrir o menu Compartilhar sem um toque novo:
+      // mostramos "Vídeo pronto" com um botão grande para esse toque.
+      if (compartilha && !ativo) { mostrarVideoPronto(blob); return { ok: false, cancelado: true }; }
+      const r = await entregar(blob, nome, mime, 'Sorteio Urbano Norte');
+      if (r.ok) fecharVideoPronto();
+      else if (r.semToque) mostrarVideoPronto(blob);
+      return r;
     },
     async salvarImagem(dataUrl, sugestao) {
       const m = /^data:image\/png;base64,([A-Za-z0-9+/=]+)$/.exec(String(dataUrl || ''));
