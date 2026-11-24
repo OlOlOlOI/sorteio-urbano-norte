@@ -126,3 +126,13 @@ html.web .gravacao-info { top: calc(14px + env(safe-area-inset-top)); }
   html.web .gravacao-barra { flex: 1; width: auto; min-width: 40px; }
   html.web .gravacao-info #gravStatus { white-space: nowrap; }
 }
+
+.btn-link { background: none; border: 0; padding: 12px 0 0; font: inherit; font-size: 14px; color: var(--cinza); text-decoration: underline; cursor: pointer; display: block; margin: 0 auto; }
+.btn-link[hidden] { display: none; }
+.pin-check { display: flex !important; align-items: center; gap: 10px; font-size: 14px; color: var(--carvao); }
+.pin-check[hidden] { display: none !important; }
+.pin-check input { display: inline-block; width: 22px; height: 22px; margin: 0; letter-spacing: 0; accent-color: var(--verde); }
+.caixa-pin .pin-botoes { flex-wrap: wrap; }
+.caixa-pin .pin-botoes .btn { flex: 1 1 auto; }
+.caixa-pin .btn[hidden] { display: none; }
+.caixa-pin label[hidden] { display: none !important; }

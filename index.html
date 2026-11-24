@@ -143,7 +143,7 @@
         <p id="dicaIOS" class="dica" hidden>No iPhone: toque em <strong>Compartilhar</strong> e depois em <strong>Adicionar à Tela de Início</strong> para instalar.</p>
         <p class="dica">Tudo fica neste aparelho: a planilha não é enviada para a internet.</p>
         <button id="btnAtualizarApp" class="btn btn-escuro btn-pequeno">Atualizar o aplicativo</button>
-        <p class="dica">Versão web 1.0.5 (o histórico e os contatos não são apagados ao atualizar).</p>
+        <p class="dica">Versão web 1.0.6 (o histórico e os contatos não são apagados ao atualizar).</p>
       </section>
       <button id="btnIrSorteio" class="btn btn-ouro btn-ir-sorteio">Voltar ao sorteio</button>
     </aside>
@@ -289,13 +289,16 @@
       <div class="caixa-contato caixa-pin" role="dialog" aria-modal="true" aria-labelledby="pinTitulo">
         <h3 id="pinTitulo">Digite o PIN</h3>
         <p id="pinTexto" class="dica"></p>
-        <label>PIN <input id="pinCampo" type="password" inputmode="numeric" autocomplete="off" maxlength="8" pattern="[0-9]*"></label>
+        <label id="pinRotulo1"><span id="pinRotulo1Texto">PIN</span> <input id="pinCampo" type="password" inputmode="numeric" autocomplete="off" maxlength="8" pattern="[0-9]*"></label>
         <label id="pinCampo2Rotulo" hidden>Repita o PIN <input id="pinCampo2" type="password" inputmode="numeric" autocomplete="off" maxlength="8" pattern="[0-9]*"></label>
+        <label id="pinBioRotulo" class="pin-check" hidden><input id="pinBioCheck" type="checkbox" checked> <span>Ativar o Face ID para as próximas vezes</span></label>
         <p id="pinMsg" class="erro" role="alert"></p>
-        <div class="linha-botoes">
+        <div class="linha-botoes pin-botoes">
           <button id="pinOk" class="btn btn-ouro btn-pequeno">Continuar</button>
+          <button id="pinBio" class="btn btn-escuro btn-pequeno" hidden>Usar Face ID</button>
           <button id="pinCancelar" class="btn btn-claro btn-pequeno">Cancelar</button>
         </div>
+        <button id="pinEsqueci" class="btn-link" type="button" hidden>Esqueci meu PIN</button>
       </div>
     </div>
 

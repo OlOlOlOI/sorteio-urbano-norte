@@ -108,7 +108,7 @@
     await kvGravar('contatos', { iv, dados });
   }
 
-  // ---------- PIN do operador (protege a aba Contato e a exportação) ----------
+  // ---------- Acesso aos contatos: Face ID (ou digital) e/ou PIN ----------
   async function derivar(pin, sal) {
     const base = await crypto.subtle.importKey('raw', new TextEncoder().encode(pin), 'PBKDF2', false, ['deriveBits']);
     const bits = await crypto.subtle.deriveBits({ name: 'PBKDF2', salt: sal, iterations: 200000, hash: 'SHA-256' }, base, 256);
@@ -116,44 +116,121 @@
   }
   let liberadoAte = 0;
   const el = (id) => document.getElementById(id);
+  const liberar = () => { liberadoAte = Date.now() + 120000; }; // fica liberado por 2 minutos
 
-  // Mostra a janela do PIN. Resolve true se liberado, false se cancelado.
+  // Face ID / digital via WebAuthn: o próprio iPhone confirma que é o dono (a chave fica no aparelho).
+  async function bioDisponivel() {
+    try { return !!(window.PublicKeyCredential && (await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable())); } catch { return false; }
+  }
+  async function bioCadastrar() {
+    try {
+      const cred = await navigator.credentials.create({ publicKey: {
+        challenge: crypto.getRandomValues(new Uint8Array(32)),
+        rp: { name: 'Sorteio Urbano Norte', id: location.hostname },
+        user: { id: crypto.getRandomValues(new Uint8Array(16)), name: 'operador', displayName: 'Operador' },
+        pubKeyCredParams: [{ type: 'public-key', alg: -7 }, { type: 'public-key', alg: -257 }],
+        authenticatorSelection: { authenticatorAttachment: 'platform', userVerification: 'required', residentKey: 'preferred' },
+        timeout: 60000, attestation: 'none',
+      } });
+      if (!cred) return false;
+      await kvGravar('bio', { id: bytesParaB64(new Uint8Array(cred.rawId)) });
+      return true;
+    } catch { return false; }
+  }
+  async function bioVerificar() {
+    try {
+      const reg = await kvObter('bio');
+      if (!reg) return false;
+      const r = await navigator.credentials.get({ publicKey: {
+        challenge: crypto.getRandomValues(new Uint8Array(32)),
+        rpId: location.hostname,
+        allowCredentials: [{ type: 'public-key', id: b64ParaBytes(reg.id), transports: ['internal', 'hybrid'] }],
+        userVerification: 'required', timeout: 60000,
+      } });
+      return !!r;
+    } catch { return false; }
+  }
+  async function apagarAcesso() { // "Esqueci": apaga contatos guardados, PIN e Face ID
+    await kvApagar('contatos'); await kvApagar('pin'); await kvApagar('bio');
+  }
+
+  // Mostra a janela de acesso. Resolve true se liberado, false se cancelado.
   async function pedirPin(motivo) {
     if (Date.now() < liberadoAte) return true;
-    const reg = await kvObter('pin');
-    const criando = !reg;
+    const [regPin, regBio, bioOk] = await Promise.all([kvObter('pin'), kvObter('bio'), bioDisponivel()]);
+    // Já tem Face ID cadastrado: pede direto (a janela só aparece se falhar ou for cancelado)
+    if (regBio && bioOk && (await bioVerificar())) { liberar(); return true; }
+
     const ov = el('pinOverlay'), inp = el('pinCampo'), inp2 = el('pinCampo2'), msg = el('pinMsg');
-    el('pinTitulo').textContent = criando ? 'Crie um PIN de acesso' : 'Digite o PIN';
-    el('pinTexto').textContent = criando
-      ? 'O PIN protege telefone e e-mail das pessoas sorteadas neste aparelho. Use 4 a 8 números.'
-      : (motivo || 'Dados pessoais — uso interno.');
-    el('pinCampo2Rotulo').hidden = !criando;
-    inp.value = ''; inp2.value = ''; msg.textContent = '';
-    ov.hidden = false;
-    inp.focus();
+    const modo = !regPin && !regBio ? 'criar' : (regPin ? 'entrar' : 'bio');
+    const mostrar = (id, v) => { el(id).hidden = !v; };
+
+    function desenhar(m) {
+      msg.textContent = ''; inp.value = ''; inp2.value = '';
+      const temPin = m === 'criar' || m === 'entrar';
+      mostrar('pinRotulo1', temPin);
+      mostrar('pinCampo2Rotulo', m === 'criar');
+      mostrar('pinBioRotulo', bioOk && !regBio && temPin);
+      mostrar('pinOk', m !== 'bio');
+      mostrar('pinBio', (m === 'bio') || (m === 'entrar' && regBio && bioOk) || (m === 'criar' && bioOk));
+      mostrar('pinEsqueci', m === 'entrar' || m === 'bio');
+      el('pinEsqueci').textContent = m === 'bio' ? 'Não consigo usar o Face ID' : 'Esqueci meu PIN';
+      el('pinCampo').inputMode = 'numeric';
+      if (m === 'criar') {
+        el('pinTitulo').textContent = 'Proteja os contatos';
+        el('pinTexto').textContent = 'Telefone e e-mail das pessoas sorteadas ficam neste aparelho. Escolha como liberar o acesso.';
+        el('pinRotulo1Texto').textContent = 'Crie um PIN (4 a 8 números)';
+        el('pinOk').textContent = 'Criar PIN';
+        el('pinBio').textContent = 'Usar só o Face ID';
+      } else if (m === 'entrar') {
+        el('pinTitulo').textContent = 'Digite o PIN';
+        el('pinTexto').textContent = motivo || 'Dados pessoais — uso interno.';
+        el('pinRotulo1Texto').textContent = 'PIN';
+        el('pinOk').textContent = 'Continuar';
+        el('pinBio').textContent = 'Usar Face ID';
+      } else if (m === 'bio') {
+        el('pinTitulo').textContent = 'Confirme com Face ID';
+        el('pinTexto').textContent = motivo || 'Dados pessoais — uso interno.';
+        el('pinBio').textContent = 'Usar Face ID';
+      } else if (m === 'reset') {
+        el('pinTitulo').textContent = 'Redefinir o acesso';
+        el('pinTexto').textContent = 'Isso apaga os telefones e e-mails guardados neste aparelho e o acesso atual (PIN e Face ID). Os nomes do histórico continuam. Os contatos voltam a aparecer se você abrir de novo a planilha de corridas. Depois você cria um novo acesso.';
+        mostrar('pinOk', true); mostrar('pinBio', false); mostrar('pinEsqueci', false); mostrar('pinRotulo1', false); mostrar('pinCampo2Rotulo', false); mostrar('pinBioRotulo', false);
+        el('pinOk').textContent = 'Apagar e criar novo acesso';
+        el('pinCancelar').textContent = 'Voltar';
+      }
+      if (m !== 'reset') el('pinCancelar').textContent = 'Cancelar';
+    }
+
     return new Promise((resolve) => {
-      const fechar = (ok) => {
-        ov.hidden = true; inp.value = ''; inp2.value = '';
-        el('pinOk').onclick = el('pinCancelar').onclick = inp.onkeydown = inp2.onkeydown = null;
-        resolve(ok);
-      };
+      let atual = modo;
+      const limpar = () => { ov.hidden = true; inp.value = ''; inp2.value = ''; el('pinOk').onclick = el('pinCancelar').onclick = el('pinBio').onclick = el('pinEsqueci').onclick = inp.onkeydown = inp2.onkeydown = null; };
+      const fechar = (ok) => { limpar(); resolve(ok); };
+
       const confirmar = async () => {
+        if (atual === 'reset') {
+          await apagarAcesso();
+          limpar();
+          resolve(await pedirPin(motivo)); // recomeça: agora cria um novo acesso
+          return;
+        }
         const v = inp.value.trim();
         if (!/^\d{4,8}$/.test(v)) { msg.textContent = 'Use de 4 a 8 números.'; return; }
-        if (criando) {
+        const querBio = bioOk && !regBio && !el('pinBioRotulo').hidden && el('pinBioCheck').checked;
+        if (atual === 'criar') {
           if (inp2.value.trim() !== v) { msg.textContent = 'Os dois PINs precisam ser iguais.'; return; }
           const sal = crypto.getRandomValues(new Uint8Array(16));
           await kvGravar('pin', { sal: bytesParaB64(sal), hash: await derivar(v, sal), falhas: 0 });
-          liberadoAte = Date.now() + 120000;
-          fechar(true);
+          if (querBio) await bioCadastrar();
+          liberar(); fechar(true);
           return;
         }
         const r = await kvObter('pin');
         if (r.bloqueadoAte && Date.now() < r.bloqueadoAte) { msg.textContent = 'Muitas tentativas. Aguarde um instante e tente de novo.'; return; }
         if ((await derivar(v, b64ParaBytes(r.sal))) === r.hash) {
           await kvGravar('pin', { ...r, falhas: 0, bloqueadoAte: 0 });
-          liberadoAte = Date.now() + 120000; // fica liberado por 2 minutos
-          fechar(true);
+          if (querBio) await bioCadastrar();
+          liberar(); fechar(true);
         } else {
           const falhas = (r.falhas || 0) + 1;
           await kvGravar('pin', { ...r, falhas, bloqueadoAte: falhas >= 5 ? Date.now() + 60000 * Math.min(30, falhas - 4) : 0 });
@@ -161,9 +238,20 @@
           inp.value = ''; inp.focus();
         }
       };
+
       el('pinOk').onclick = confirmar;
-      el('pinCancelar').onclick = () => fechar(false);
+      el('pinCancelar').onclick = () => { if (atual === 'reset') { atual = modo === 'criar' ? 'entrar' : modo; desenhar(atual); } else fechar(false); };
+      el('pinEsqueci').onclick = () => { atual = 'reset'; desenhar('reset'); };
+      el('pinBio').onclick = async () => {
+        if (atual === 'criar') { // só Face ID, sem PIN
+          if (await bioCadastrar()) { liberar(); fechar(true); } else msg.textContent = 'Não foi possível ativar o Face ID. Crie um PIN ou tente de novo.';
+        } else if (await bioVerificar()) { liberar(); fechar(true); } else msg.textContent = 'Não foi possível confirmar. Tente de novo' + (regPin ? ' ou digite o PIN.' : '.');
+      };
       inp.onkeydown = inp2.onkeydown = (e) => { if (e.key === 'Enter') confirmar(); if (e.key === 'Escape') fechar(false); };
+
+      desenhar(atual);
+      ov.hidden = false;
+      if (!matchMedia('(pointer: coarse)').matches && atual !== 'bio') inp.focus();
     });
   }
   window.travarContatos = () => { liberadoAte = 0; };
