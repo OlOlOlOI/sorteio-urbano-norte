@@ -52,7 +52,7 @@ function abrirHistorico() {
   $('histBusca').value = '';
   $('histOverlay').hidden = false;
   renderGaveta();
-  $('histBusca').focus();
+  if (!matchMedia('(pointer: coarse)').matches) $('histBusca').focus(); // no celular o teclado só abre quando a pessoa toca na busca
 }
 function fecharHistorico() { $('histOverlay').hidden = true; }
 

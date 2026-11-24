@@ -60,6 +60,8 @@
     if (!vv) return;
     raiz.setProperty('--vvh', vv.height + 'px');
     raiz.setProperty('--vvt', vv.offsetTop + 'px');
+    // altura que o teclado cobre embaixo (0 quando fechado)
+    raiz.setProperty('--vvb', Math.max(0, window.innerHeight - vv.height - vv.offsetTop) + 'px');
   };
   if (vv) { vv.addEventListener('resize', ajustarVisivel); vv.addEventListener('scroll', ajustarVisivel); ajustarVisivel(); }
 

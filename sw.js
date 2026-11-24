@@ -1,5 +1,5 @@
 // Service worker: guarda o aplicativo para abrir sem internet, mas SEMPRE tenta buscar a versão mais nova primeiro.
-const VERSAO = 'sorteio-un-web-1.0.3';
+const VERSAO = 'sorteio-un-web-1.0.4';
 const ARQUIVOS = [
   './', 'index.html', 'style.css', 'mobile.css', 'manifest.webmanifest',
   'api-web.js', 'mobile.js', 'renderer.js', 'historico.js', 'fundo.js', 'vertical.js', 'logo.js', 'video.js', 'tema.js',

@@ -1,7 +1,8 @@
 /* Versão web: ajustes gerais e MODO CELULAR (tela única + barra de navegação embaixo) */
 html:not(.web) .so-web { display: none; }
 html.web, html.web body { height: 100%; }
-html.web body { overscroll-behavior: none; -webkit-text-size-adjust: 100%; overflow: hidden; }
+html.web { background: #2b2a2c; } /* faixas que o Safari deixa sem página (barra de baixo) ficam escuras, como a barra de navegação */
+html.web body { overscroll-behavior: none; -webkit-text-size-adjust: 100%; overflow: hidden; position: fixed; inset: 0; width: 100%; } /* a página não 'anda' quando o teclado abre */
 html.web .app { height: 100vh; height: 100dvh; }
 
 html.web #btnPasta, html.web #btnAbrirPasta, html.web #pastaAtual, html.web #btnMostrarSalvo,
@@ -92,12 +93,14 @@ html.web label.check:has(#pastaDireto), html.web #blocoVertical .linha-botoes { 
 
   /* Janelas */
   /* Janelas no MEIO da tela; seguem a área visível quando o teclado abre */
-  html.web .sobreposicao { inset: auto; left: 0; right: 0; top: var(--vvt, 0px); height: var(--vvh, 100dvh); padding: 12px; align-items: center; justify-content: center; }
+  /* O fundo escuro cobre a tela toda; a janela fica centralizada na parte visível (acima do teclado) */
+  html.web .sobreposicao { inset: 0; padding: calc(12px + var(--vvt, 0px)) 12px calc(12px + var(--vvb, 0px)); align-items: center; justify-content: center; }
   html.web .caixa-hist { width: 100%; max-height: 100%; border-radius: 16px; }
   html.web .caixa-contato, html.web .caixa-pin, html.web .caixa-video { width: 100%; max-height: 100%; overflow-y: auto; border-radius: 16px; padding: 18px; }
   html.web .caixa-contato h3 { font-size: 24px; }
   html.web .hist-topo, html.web .hist-ferramentas, html.web .hist-aviso { padding-left: 14px; padding-right: 14px; }
-  html.web .hist-rolagem { padding: 0 8px; }
+  html.web .hist-rolagem { padding: 0 8px; min-height: 48px; }
+  html.web .caixa-hist .hist-aviso { padding-top: 8px; padding-bottom: 12px; font-size: 12px; }
   html.web .hist-topo h3 { font-size: 17px; }
   html.web .tabela th:nth-child(n+4), html.web .tabela td:nth-child(n+4) { display: none; } /* no celular: Nº, data e nome; toque na linha para abrir */
   html.web .tabela td:nth-child(3) { font-size: 15px; }
@@ -106,6 +109,7 @@ html.web label.check:has(#pastaDireto), html.web #blocoVertical .linha-botoes { 
 }
 
 /* Gravação: a imagem mantém a proporção 9:16 (sem esticar) e respeita a área do relógio/ilha do iPhone */
+html.web .gravacao { background: #141416; }
 html.web .gravacao-palco canvas { width: min(100vw, calc(100vh * 9 / 16)); width: min(100vw, calc(100dvh * 9 / 16)); height: auto; max-width: none; aspect-ratio: 9 / 16; }
 html.web .gravacao-info { top: calc(14px + env(safe-area-inset-top)); }
 
